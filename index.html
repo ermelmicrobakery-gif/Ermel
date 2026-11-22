@@ -22,6 +22,7 @@ section{padding:40px 0;border-top:1px solid var(--ln)}
 .tg{color:var(--mu);margin:6px auto 0;max-width:34ch;font-size:17px}
 .hero .ey{margin-top:14px}
 .mu{color:var(--mu);margin:0 0 16px}
+.mkm{margin:4px 0 0}.mkm summary{cursor:pointer;list-style:none;display:inline-block;padding:10px 14px;margin:0 0 10px;border:1px solid var(--ln);border-radius:3px;font-family:var(--fm);font-size:13px;letter-spacing:.04em;text-transform:uppercase}.mkm summary::-webkit-details-marker{display:none}.mkm summary::after{content:' ▾'}.mkm[open] summary::after{content:' ▴'}
 .mk{display:flex;gap:16px;align-items:center;width:100%;text-align:left;background:var(--cd);border:1px solid var(--ln);border-radius:3px;padding:12px 14px;margin:0 0 10px;font:inherit;color:inherit;cursor:pointer;transition:border-color .15s}
 .mk:hover{border-color:var(--mu)}
 .dt{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:56px;padding:6px 4px;background:var(--kraft);color:var(--on-kraft);border-radius:3px;font:500 11px/1.2 var(--fm);letter-spacing:.1em;text-transform:uppercase}
@@ -82,7 +83,8 @@ const t=(k,o={})=>T[L][k].replace(/\{(\w+)\}/g,(_,x)=>o[x]);
 const pn=p=>L=='en'&&p.ne?p.ne:p.name,pd=p=>L=='en'&&p.de?p.de:p.desc,abt=()=>L=='en'?(D.aboutEn||DEF.aboutEn):D.about;
 let D=DEF,cur=null,cart={},step='cat',tab='mk',PW='',ORD=[],omk='',who='',tel='',busy=false;
 try{D=Object.assign({},DEF,JSON.parse(localStorage.getItem('em')||'null')||{})}catch(_){}
-const td=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const td=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};mkB=m=>`<button class="mk" data-a="open" data-id="${E(m.id)}"><span class="dt"><b>${new Date(m.date+'T12:00').getDate()}</b>${fd(m.date,{month:'short'})}</span><span class="in"><strong>${E(m.name)}</strong><small>${fd(m.date,{weekday:'long'})}, ${E(m.time)}, ${E(m.place)}</small></span><span class="go">${t('ord')}</span></button>`;
+mkH=ms=>{if(!ms.length)return `<p class="mu">${t('nomk')}</p>`;const x=new Date();x.setDate(x.getDate()+14);const lim=x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');let a=ms.filter(m=>m.date<=lim);if(!a.length)a=ms.slice(0,2);const r=ms.slice(a.length);return a.map(mkB).join('')+(r.length?`<details class="mkm"><summary>${L=='en'?'See all dates':'Se alle datoer'} (${r.length})</summary>${r.map(mkB).join('')}</details>`:'')};
 const fd=(s,o)=>new Date(s+'T12:00').toLocaleDateString(L=='en'?'en-GB':'nb-NO',o),kr=n=>'kr '+n;
 const toast=m=>{const t=$('#ts');t.textContent=m;t.className='on';setTimeout(()=>t.className='',3500)};
 const by=id=>D.markets.find(m=>m.id==id),mkl=m=>m.name+', '+fd(m.date,{day:'numeric',month:'long'});
@@ -95,7 +97,7 @@ async function refresh(){if(!API)return;try{const r=await fetch(API).then(r=>r.j
 function render(){
  const ms=srt().filter(m=>m.date>=td());document.documentElement.lang=L=='en'?'en':'nb';
  $('#app').innerHTML=`<header class="hero"><div class="lgw"><select id="lg" aria-label="Language / Språk"><option value="no"${L=='no'?' selected':''}>Norsk</option><option value="en"${L=='en'?' selected':''}>English</option></select></div><img class="lgl" src="${LOGO}" alt="Er Mel microbakery"><img class="lgd" src="${LOGOD}" alt="Er Mel microbakery"><p class="tg">${t('tag')}</p><span class="ey">Surdeig · Steinmalt mel · Vinterbro</span></header>
-<section id="markets"><h2>${t('mt')}</h2><p class="mu">${t('mi')}</p>${ms.map(m=>`<button class="mk" data-a="open" data-id="${E(m.id)}"><span class="dt"><b>${new Date(m.date+'T12:00').getDate()}</b>${fd(m.date,{month:'short'})}</span><span class="in"><strong>${E(m.name)}</strong><small>${fd(m.date,{weekday:'long'})}, ${E(m.time)}, ${E(m.place)}</small></span><span class="go">${t('ord')}</span></button>`).join('')||`<p class="mu">${t('nomk')}</p>`}</section>
+<section id="markets"><h2>${t('mt')}</h2><p class="mu">${t('mi')}</p>${mkH(ms)}</section>
 <section id="about"><h2>${t('ab')}</h2>${abt().split('\n').filter(Boolean).map(p=>`<p>${E(p)}</p>`).join('')}</section>
 <section id="catering"><h2>${t('ct')}</h2>${julH()}<p class="mu">${t('ci')}</p><form id="cf">${julS()}<input name="n" placeholder="${t('nm')}" required><input name="c" placeholder="${t('cc')}" required><input name="d" type="date" aria-label="${t('dt')}"><input name="p" type="number" min="1" placeholder="${t('pp')}"><textarea name="t" rows="4" placeholder="${t('tx')}" required></textarea><button class="bt">${t('sr')}</button></form></section>
 <footer>@${E(D.ig)} · ${E(D.email)}<br><button class="lk" data-a="adm">Admin</button></footer>`}
